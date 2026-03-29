@@ -14,41 +14,45 @@ SSH-cloned panes are named with a `[ssh]` prefix.
 
 ## Install
 
-The recommended installation method is to load the versioned `.wasm` asset from GitHub Releases.
+The recommended installation method is to define a plugin alias that points at the versioned `.wasm` asset on GitHub Releases.
 
 Replace `v0.1.0` with the release you want:
 
 ```kdl
+plugins {
+    ssh-split location="https://github.com/yqmmm/zellij-ssh-split/releases/download/v0.1.0/zellij-ssh-split.wasm"
+}
+
 load_plugins {
-    "https://github.com/yqmmm/zellij-ssh-split/releases/download/v0.1.0/zellij-ssh-split.wasm"
+    "ssh-split"
 }
 ```
 
-Then bind keys with `MessagePlugin`:
+Then bind keys with `MessagePlugin "ssh-split"`:
 
 ```kdl
 keybinds {
     normal {
         bind "Alt s" {
-            MessagePlugin "https://github.com/yqmmm/zellij-ssh-split/releases/download/v0.1.0/zellij-ssh-split.wasm" {
+            MessagePlugin "ssh-split" {
                 payload "pane"
             }
         }
         bind "Alt t" {
-            MessagePlugin "https://github.com/yqmmm/zellij-ssh-split/releases/download/v0.1.0/zellij-ssh-split.wasm" {
+            MessagePlugin "ssh-split" {
                 payload "tab"
             }
         }
     }
     pane {
         bind "r" {
-            MessagePlugin "https://github.com/yqmmm/zellij-ssh-split/releases/download/v0.1.0/zellij-ssh-split.wasm" {
+            MessagePlugin "ssh-split" {
                 payload "pane-right"
             }
             SwitchToMode "Normal"
         }
         bind "d" {
-            MessagePlugin "https://github.com/yqmmm/zellij-ssh-split/releases/download/v0.1.0/zellij-ssh-split.wasm" {
+            MessagePlugin "ssh-split" {
                 payload "pane-down"
             }
             SwitchToMode "Normal"
@@ -97,8 +101,12 @@ target/wasm32-wasip1/release/zellij-ssh-split.wasm
 For a local checkout, use:
 
 ```kdl
+plugins {
+    ssh-split location="file:/Users/yuqianmian/code/zellij-ssh-split/target/wasm32-wasip1/release/zellij-ssh-split.wasm"
+}
+
 load_plugins {
-    "file:/Users/yuqianmian/code/zellij-ssh-split/target/wasm32-wasip1/release/zellij-ssh-split.wasm"
+    "ssh-split"
 }
 ```
 
