@@ -467,12 +467,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2db04e74f0a9a93103b50e90b96024c9b2bdca8bce6a632ec71b88736d3d359"
 
 [[package]]
-name = "dunce"
-version = "1.0.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "92773504d58c093f6de2459af4af33faa518c13451eb8f2b5698ed3d36e7c813"
-
-[[package]]
 name = "either"
 version = "1.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2739,6 +2733,8 @@ dependencies = [
 [[package]]
 name = "zellij-tile"
 version = "0.44.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "28e99d5eb7fb1f4701c10d957ae90e7ffa2da714b0dc9d6569b2a20704bc454e"
 dependencies = [
  "clap",
  "prost",
@@ -2752,6 +2748,8 @@ dependencies = [
 [[package]]
 name = "zellij-utils"
 version = "0.44.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e1b1e35c794db5cb4ae687b5a44418a1af01bc7b59ac6d8c1b10b8a6fab186ce"
 dependencies = [
  "anyhow",
  "backtrace",
@@ -2763,7 +2761,6 @@ dependencies = [
  "crossbeam",
  "crossterm",
  "directories",
- "dunce",
  "humantime",
  "include_dir",
  "interprocess",

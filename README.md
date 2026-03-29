@@ -12,7 +12,16 @@ If the focused pane is not currently running `ssh`, it falls back to normal Zell
 
 ## Build
 
-This plugin uses your local `~/code/zellij` checkout as a path dependency.
+This plugin uses published crates from crates.io and does not depend on a local Zellij checkout.
+
+Current dependency versions in this repo:
+
+```toml
+zellij-tile = "0.44.0"
+zellij-utils = "0.44.0"
+```
+
+Important: Zellij plugins are version-sensitive. Build this plugin against the same Zellij plugin API version as the Zellij binary you run. If your installed Zellij is newer or older than `0.44.0`, update the crate versions in [`Cargo.toml`](/Users/yuqianmian/code/zellij-ssh-clone-plugin/Cargo.toml) accordingly.
 
 1. Install the WASI target:
 

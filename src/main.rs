@@ -12,11 +12,11 @@ register_plugin!(State);
 
 impl ZellijPlugin for State {
     fn load(&mut self, _configuration: BTreeMap<String, String>) {
+        set_selectable(false);
         request_permission(&[
             PermissionType::ReadApplicationState,
             PermissionType::RunActionsAsUser,
         ]);
-        set_selectable(false);
     }
 
     fn pipe(&mut self, pipe_message: PipeMessage) -> bool {
@@ -45,7 +45,7 @@ impl State {
             Action::NewTiledPane {
                 direction,
                 command,
-                pane_name: None,
+                pane_name: context.pane_name,
                 near_current_pane: false,
                 borderless: None,
             },
@@ -79,15 +79,23 @@ impl State {
     fn focused_terminal_context(&self) -> Option<FocusedTerminalContext> {
         let (_tab_index, pane_id) = get_focused_pane_info().ok()?;
         let cwd = get_pane_cwd(pane_id).ok().or_else(fallback_cwd);
-        let ssh_run_command = get_pane_running_command(pane_id)
-            .ok()
-            .and_then(|running_command| ssh_run_command(running_command, cwd.clone()));
-        Some(FocusedTerminalContext { cwd, ssh_run_command })
+        let running_command = get_pane_running_command(pane_id).ok();
+        let pane_name = running_command
+            .as_ref()
+            .and_then(|running_command| ssh_pane_name(running_command));
+        let ssh_run_command =
+            running_command.and_then(|running_command| ssh_run_command(running_command, cwd.clone()));
+        Some(FocusedTerminalContext {
+            cwd,
+            pane_name,
+            ssh_run_command,
+        })
     }
 }
 
 struct FocusedTerminalContext {
     cwd: Option<PathBuf>,
+    pane_name: Option<String>,
     ssh_run_command: Option<RunCommandAction>,
 }
 
@@ -111,6 +119,68 @@ fn ssh_run_command(command: Vec<String>, cwd: Option<PathBuf>) -> Option<RunComm
         originating_plugin: None,
         use_terminal_title: false,
     })
+}
+
+fn ssh_pane_name(command: &[String]) -> Option<String> {
+    let executable = command.first()?;
+    let executable_name = Path::new(executable)
+        .file_stem()
+        .and_then(|stem| stem.to_str())
+        .unwrap_or(executable)
+        .to_ascii_lowercase();
+    if executable_name != "ssh" {
+        return None;
+    }
+    ssh_target(&command[1..]).map(|target| format!("[ssh] {target}"))
+}
+
+fn ssh_target(args: &[String]) -> Option<&str> {
+    let mut iter = args.iter().peekable();
+    while let Some(arg) = iter.next() {
+        if arg == "--" {
+            return iter.next().map(|s| s.as_str());
+        }
+        if !arg.starts_with('-') || arg == "-" {
+            return Some(arg.as_str());
+        }
+        if option_takes_value(arg) && !option_value_is_attached(arg) {
+            iter.next();
+        }
+    }
+    None
+}
+
+fn option_takes_value(arg: &str) -> bool {
+    matches!(
+        arg.chars().nth(1),
+        Some(
+            'B'
+                | 'b'
+                | 'c'
+                | 'D'
+                | 'E'
+                | 'e'
+                | 'F'
+                | 'I'
+                | 'i'
+                | 'J'
+                | 'L'
+                | 'l'
+                | 'm'
+                | 'O'
+                | 'o'
+                | 'p'
+                | 'Q'
+                | 'R'
+                | 'S'
+                | 'W'
+                | 'w'
+        )
+    )
+}
+
+fn option_value_is_attached(arg: &str) -> bool {
+    arg.len() > 2 && !arg.starts_with("--")
 }
 
 fn fallback_cwd() -> Option<PathBuf> {
