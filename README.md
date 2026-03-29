@@ -10,9 +10,58 @@ If the focused pane is not currently running `ssh`, it falls back to normal Zell
 - new pane: open the default shell in a new pane
 - new tab: open the default shell in a new tab, preserving the focused pane's cwd when available
 
-## Build
+SSH-cloned panes are named with a `[ssh]` prefix.
 
-This plugin uses published crates from crates.io and does not depend on a local Zellij checkout.
+## Install
+
+The recommended installation method is to load the versioned `.wasm` asset from GitHub Releases.
+
+Replace `v0.1.0` with the release you want:
+
+```kdl
+load_plugins {
+    "https://github.com/yqmmm/zellij-ssh-split/releases/download/v0.1.0/zellij-ssh-split.wasm"
+}
+```
+
+Then bind keys with `MessagePlugin`:
+
+```kdl
+keybinds {
+    normal {
+        bind "Alt s" {
+            MessagePlugin "https://github.com/yqmmm/zellij-ssh-split/releases/download/v0.1.0/zellij-ssh-split.wasm" {
+                payload "pane"
+            }
+        }
+        bind "Alt t" {
+            MessagePlugin "https://github.com/yqmmm/zellij-ssh-split/releases/download/v0.1.0/zellij-ssh-split.wasm" {
+                payload "tab"
+            }
+        }
+    }
+    pane {
+        bind "r" {
+            MessagePlugin "https://github.com/yqmmm/zellij-ssh-split/releases/download/v0.1.0/zellij-ssh-split.wasm" {
+                payload "pane-right"
+            }
+            SwitchToMode "Normal"
+        }
+        bind "d" {
+            MessagePlugin "https://github.com/yqmmm/zellij-ssh-split/releases/download/v0.1.0/zellij-ssh-split.wasm" {
+                payload "pane-down"
+            }
+            SwitchToMode "Normal"
+        }
+    }
+}
+```
+
+Use a versioned release URL for stability. `latest/download/...` is convenient, but it will change as new releases are published.
+
+## Release Compatibility
+
+Zellij plugins are version-sensitive. Build this plugin against the same Zellij plugin API version as the Zellij binary you run.
 
 Current dependency versions in this repo:
 
@@ -21,7 +70,11 @@ zellij-tile = "0.44.0"
 zellij-utils = "0.44.0"
 ```
 
-Important: Zellij plugins are version-sensitive. Build this plugin against the same Zellij plugin API version as the Zellij binary you run. If your installed Zellij is newer or older than `0.44.0`, update the crate versions in [`Cargo.toml`](/Users/yuqianmian/code/zellij-ssh-split/Cargo.toml) accordingly.
+If your installed Zellij is newer or older than `0.44.0`, update the crate versions in [`Cargo.toml`](/Users/yuqianmian/code/zellij-ssh-split/Cargo.toml) accordingly.
+
+## Local Build
+
+This plugin uses published crates from crates.io and does not depend on a local Zellij checkout.
 
 1. Install the WASI target:
 
@@ -41,46 +94,11 @@ The resulting plugin will be:
 target/wasm32-wasip1/release/zellij-ssh-split.wasm
 ```
 
-## Zellij Config
-
-Add the plugin to `load_plugins` so it runs in the background on session start:
+For a local checkout, use:
 
 ```kdl
 load_plugins {
     "file:/Users/yuqianmian/code/zellij-ssh-split/target/wasm32-wasip1/release/zellij-ssh-split.wasm"
-}
-```
-
-Bind keys with `MessagePlugin`:
-
-```kdl
-keybinds {
-    normal {
-        bind "Alt s" {
-            MessagePlugin "file:/Users/yuqianmian/code/zellij-ssh-split/target/wasm32-wasip1/release/zellij-ssh-split.wasm" {
-                payload "pane"
-            }
-        }
-        bind "Alt t" {
-            MessagePlugin "file:/Users/yuqianmian/code/zellij-ssh-split/target/wasm32-wasip1/release/zellij-ssh-split.wasm" {
-                payload "tab"
-            }
-        }
-    }
-    pane {
-        bind "r" {
-            MessagePlugin "file:/Users/yuqianmian/code/zellij-ssh-split/target/wasm32-wasip1/release/zellij-ssh-split.wasm" {
-                payload "pane-right"
-            }
-            SwitchToMode "Normal"
-        }
-        bind "d" {
-            MessagePlugin "file:/Users/yuqianmian/code/zellij-ssh-split/target/wasm32-wasip1/release/zellij-ssh-split.wasm" {
-                payload "pane-down"
-            }
-            SwitchToMode "Normal"
-        }
-    }
 }
 ```
 
@@ -89,3 +107,4 @@ keybinds {
 - The plugin only clones `ssh` commands. It intentionally ignores other foreground commands.
 - It uses Zellij's plugin APIs to inspect the focused pane and then dispatches normal Zellij actions.
 - No changes to the Zellij repo are required.
+- This repo includes a GitHub Actions workflow that builds `zellij-ssh-split.wasm` and uploads it to tagged releases.
