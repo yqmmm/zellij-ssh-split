@@ -1,4 +1,4 @@
-# zellij-ssh-clone-plugin
+# zellij-ssh-split
 
 A standalone Zellij plugin that adds key-triggerable actions for:
 
@@ -21,7 +21,7 @@ zellij-tile = "0.44.0"
 zellij-utils = "0.44.0"
 ```
 
-Important: Zellij plugins are version-sensitive. Build this plugin against the same Zellij plugin API version as the Zellij binary you run. If your installed Zellij is newer or older than `0.44.0`, update the crate versions in [`Cargo.toml`](/Users/yuqianmian/code/zellij-ssh-clone-plugin/Cargo.toml) accordingly.
+Important: Zellij plugins are version-sensitive. Build this plugin against the same Zellij plugin API version as the Zellij binary you run. If your installed Zellij is newer or older than `0.44.0`, update the crate versions in [`Cargo.toml`](/Users/yuqianmian/code/zellij-ssh-split/Cargo.toml) accordingly.
 
 1. Install the WASI target:
 
@@ -38,7 +38,7 @@ cargo build --release --target wasm32-wasip1
 The resulting plugin will be:
 
 ```text
-target/wasm32-wasip1/release/zellij_ssh_clone_plugin.wasm
+target/wasm32-wasip1/release/zellij-ssh-split.wasm
 ```
 
 ## Zellij Config
@@ -47,7 +47,7 @@ Add the plugin to `load_plugins` so it runs in the background on session start:
 
 ```kdl
 load_plugins {
-    "file:/Users/yuqianmian/code/zellij-ssh-clone-plugin/target/wasm32-wasip1/release/zellij_ssh_clone_plugin.wasm"
+    "file:/Users/yuqianmian/code/zellij-ssh-split/target/wasm32-wasip1/release/zellij-ssh-split.wasm"
 }
 ```
 
@@ -57,25 +57,25 @@ Bind keys with `MessagePlugin`:
 keybinds {
     normal {
         bind "Alt s" {
-            MessagePlugin "file:/Users/yuqianmian/code/zellij-ssh-clone-plugin/target/wasm32-wasip1/release/zellij_ssh_clone_plugin.wasm" {
+            MessagePlugin "file:/Users/yuqianmian/code/zellij-ssh-split/target/wasm32-wasip1/release/zellij-ssh-split.wasm" {
                 payload "pane"
             }
         }
         bind "Alt t" {
-            MessagePlugin "file:/Users/yuqianmian/code/zellij-ssh-clone-plugin/target/wasm32-wasip1/release/zellij_ssh_clone_plugin.wasm" {
+            MessagePlugin "file:/Users/yuqianmian/code/zellij-ssh-split/target/wasm32-wasip1/release/zellij-ssh-split.wasm" {
                 payload "tab"
             }
         }
     }
     pane {
         bind "r" {
-            MessagePlugin "file:/Users/yuqianmian/code/zellij-ssh-clone-plugin/target/wasm32-wasip1/release/zellij_ssh_clone_plugin.wasm" {
+            MessagePlugin "file:/Users/yuqianmian/code/zellij-ssh-split/target/wasm32-wasip1/release/zellij-ssh-split.wasm" {
                 payload "pane-right"
             }
             SwitchToMode "Normal"
         }
         bind "d" {
-            MessagePlugin "file:/Users/yuqianmian/code/zellij-ssh-clone-plugin/target/wasm32-wasip1/release/zellij_ssh_clone_plugin.wasm" {
+            MessagePlugin "file:/Users/yuqianmian/code/zellij-ssh-split/target/wasm32-wasip1/release/zellij-ssh-split.wasm" {
                 payload "pane-down"
             }
             SwitchToMode "Normal"
