@@ -1,0 +1,10 @@
+[package]
+name = "zellij-ssh-clone-plugin"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+publish = false
+
+[dependencies]
+zellij-tile = { path = "../zellij/zellij-tile" }
+zellij-utils = { path = "../zellij/zellij-utils" }
